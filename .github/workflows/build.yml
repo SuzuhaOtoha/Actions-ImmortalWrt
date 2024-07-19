@@ -37,8 +37,8 @@ jobs:
         run: |
           sudo bash -c 'bash <(curl -s https://build-scripts.immortalwrt.org/init_build_environment.sh)'
           
-     - name: 克隆当前仓库 (Clone current repo)
-       uses: actions/checkout@v4
+      - name: 克隆当前仓库 (Clone current repo)
+        uses: actions/checkout@v4
 
       - name: 克隆 ImmortalWrt 仓库 (Clone ImmortalWrt repo)
         uses: actions/checkout@v4
