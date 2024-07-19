@@ -35,12 +35,10 @@ jobs:
     steps:
       - name: 下载编译所需的依赖 (Install the software packages required for compilation)
         run: |
-          sudo apt update -y
-          sudo apt full-upgrade -y
-          sudo apt install -y ack antlr3 asciidoc autoconf automake autopoint binutils bison build-essential bzip2 ccache clang clangd cmake cpio curl device-tree-compiler ecj fastjar flex gawk gettext gcc-multilib g++-multilib git gperf haveged help2man intltool lib32gcc-s1 libc6-dev-i386 libelf-dev libglib2.0-dev libgmp3-dev libltdl-dev libmpc-dev libmpfr-dev libncurses5-dev libncursesw5 libncursesw5-dev libreadline-dev libssl-dev libtool lld lldb lrzsz mkisofs msmtp nano ninja-build p7zip p7zip-full patch pkgconf python2.7 python3 python3-pip python3-ply python-docutils qemu-utils re2c rsync scons squashfs-tools subversion swig texinfo uglifyjs upx-ucl unzip vim wget xmlto xxd zlib1g-dev
-
-     # - name: 克隆当前仓库 (Clone current repo)
-     #   uses: actions/checkout@v4
+          sudo bash -c 'bash <(curl -s https://build-scripts.immortalwrt.org/init_build_environment.sh)'
+          
+     - name: 克隆当前仓库 (Clone current repo)
+       uses: actions/checkout@v4
 
       - name: 克隆 ImmortalWrt 仓库 (Clone ImmortalWrt repo)
         uses: actions/checkout@v4
@@ -49,21 +47,21 @@ jobs:
           ref: ${{inputs.branch}}
           path: ImmortalWrt
 
-      # - name: 复制当前仓库的配置文件到 ImmortalWrt 仓库  (Copy current repo config to ImmortalWrt repo)
-      #   run: cp -f .config feeds.conf.default diy.sh ImmortalWrt/
+      - name: 复制当前仓库的配置文件到 ImmortalWrt 仓库  (Copy current repo config to ImmortalWrt repo)
+        run: cp -f .config feeds.conf.default diy.sh ImmortalWrt/
 
-      # - name: 运行 diy.sh (Run diy.sh)
-      #   working-directory: ImmortalWrt
-      #   run: |
-      #     chmod +x diy.sh
-      #     ./diy.sh
+      - name: 运行 diy.sh (Run diy.sh)
+        working-directory: ImmortalWrt
+        run: |
+          chmod +x diy.sh
+          ./diy.sh
 
       - name: 更新并下载 feeds (Update and download feeds)
         working-directory: ImmortalWrt
         run: ./scripts/feeds update -a && ./scripts/feeds install -a
 
-      # - name: 再次复制当前仓库的配置文件到 ImmortalWrt 仓库 (Copy current repo config to ImmortalWrt repo again)
-      #   run: cp -f .config feeds.conf.default diy.sh ImmortalWrt/
+      - name: 再次复制当前仓库的配置文件到 ImmortalWrt 仓库 (Copy current repo config to ImmortalWrt repo again)
+        run: cp -f .config feeds.conf.default diy.sh ImmortalWrt/
 
       - name: 编译前上传配置 (Upload config before build)
         uses: actions/upload-artifact@v4
